@@ -20,20 +20,20 @@ Mockup erstellt mit [Microsoft Copilot](https://copilot.cloud.microsoft/)
 
 ## Pflanzen ansehen 👀
 
-![Favorites Page](Mockup Plant Page.png)
+![Plant Page](./Mockup_Plant_Page.png)
 
 * Als Nutzer möchte ich mir Details einer Pflanzen ansehen können, um mehr über die Pflanze zu erfahren
 
 ## Pflanzen speichern ️💾
 
-![Favorites Page](Mockup Favorites.png)
+![Favorites Page](./Mockup_Favorites.png)
 
 * Als Nutzer möchte ich mir Pflanzen aus der Suche speichern können, um nicht immer wieder neu suchen zu müssen und mir alle meine Pflanzen merken zu müssen
 * Als Nutzer möchte ich Pflanzen auch entspeichern können, um alte Pflanzen die mich nicht mehr interessieren zu entfernen
 
 ## Einstellungen ⚙
 
-![Favorites Page](Mockup Settings.png)
+![Settings Page](./Mockup_Settings.png)
 
 * Als Nutzer möchte ich zwischen Light-Mode und Dark-Mode wechseln können, um die
 * Als Entwickler sollte es die Möglichkeit geben meinen persönlichen API-Code für [Trefle](https://trefle.io) eingeben können, um keinen vorgegebenen API-Schlüssel im Code vorzugeben 📡
