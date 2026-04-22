@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:pflanzenbox/storage.dart';
 import 'pages/settingsPage.dart';
-import 'pages/plantsPage.dart';
+import 'pages/savedPlantsPage.dart';
 import 'pages/searchPage.dart';
-import 'pages/dhgePage.dart';
 
 class AppTheme {
   static const Color seed = Color(0xFF1B9721);
@@ -29,7 +28,11 @@ class AppTheme {
   }
 }
 
-void main() => runApp(const mobapApp());
+void main() async  {
+  WidgetsFlutterBinding.ensureInitialized();
+  loadPlants();
+  runApp(const mobapApp());
+}
 
 class mobapApp extends StatelessWidget {
   const mobapApp({super.key});
@@ -48,24 +51,22 @@ class navigationBar extends StatefulWidget {
   const navigationBar({super.key});
 
   @override
-  State<navigationBar> createState() => _NavigationBarState();
+  State<navigationBar> createState() => NavigationBarState();
 }
 
-class _NavigationBarState extends State<navigationBar> {
+class NavigationBarState extends State<navigationBar> {
   int currentPageIndex = 0;
 
   final List<Widget> pagesList = const [
     searchPage(),
-    plantsPage(),
+    savedPlantsPage(),
     settingsPage(),
-    dhgePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
-
         body: IndexedStack(
           index: currentPageIndex,
           children: pagesList,
@@ -75,6 +76,7 @@ class _NavigationBarState extends State<navigationBar> {
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
+
           });
         },
         selectedIndex: currentPageIndex,
@@ -93,11 +95,6 @@ class _NavigationBarState extends State<navigationBar> {
                 selectedIcon: Icon(Icons.settings),
                 icon: Icon(Icons.settings_outlined),
                 label: 'Settings',
-              ),
-              NavigationDestination(
-                selectedIcon: Icon(Icons.eleven_mp),
-                icon: Icon(Icons.eleven_mp),
-                label: 'DHGE',
               ),
             ]
         )

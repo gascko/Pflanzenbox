@@ -7,8 +7,10 @@ class previewPlant {
   final String scientificName;
 
   const previewPlant({required this.id, required this.commonName, required this.family, required this.genus, required this.imageUrl, required this.scientificName});
+  int getId() {
+    return this.id;
+  }
 }
-
 
 class Plant {
   final int id;
