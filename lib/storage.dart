@@ -1,47 +1,82 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'variables.dart';
-import 'network.dart';
-import 'objects.dart' show Plant;
+import 'package:flutter/material.dart';
 
-Future<void> loadPlants() async {
-  final storage = await SharedPreferences.getInstance();
-  savedPlants = storage.getStringList('savedPlants') ?? [];
-  for (int i = 0; i < savedPlants.length; i++) {
-    Plant newPlant = await searchPlant(int.parse(savedPlants[i]));
-    savedPlantObjects.add(newPlant);
+class SavedColorSchemeModeNotifier with ChangeNotifier {
+   ThemeMode themeMode = ThemeMode.system;
+   ThemeMode get mode => themeMode;
+
+   int themeModeToInt(ThemeMode mode) {
+     switch(mode) {
+       case ThemeMode.light:
+         return 1;
+       case ThemeMode.dark:
+         return 2;
+       case ThemeMode.system:
+         return 0;
+     }
+   }
+
+   ThemeMode intToThemeMode(int storageMode) {
+     switch(storageMode) {
+       case 1:
+         return ThemeMode.light;
+       case 2:
+         return ThemeMode.dark;
+       default:
+         return ThemeMode.system;
+     }
+   }
+
+  Future<void> loadMode() async {
+     final storage = await SharedPreferences.getInstance();
+     int storageMode = storage.getInt('themeMode') ?? 0;
+     themeMode = intToThemeMode(storageMode);
+     notifyListeners();
+     print("loaded mode -> $themeMode");
   }
-  print("loaded Plants");
+
+  Future<void> setMode(ThemeMode mode) async {
+     themeMode = mode;
+     final storage = await SharedPreferences.getInstance();
+     await storage.setInt('themeMode', themeModeToInt(mode));
+     notifyListeners();
+     print("set mode -> $themeMode");
+  }
 }
 
-Future<void> addPlant(String plantId) async {
-  final storage = await SharedPreferences.getInstance();
-  savedPlants.add(plantId);
-  await storage.setStringList('savedPlants', savedPlants);
-  Plant newPlant = await searchPlant(int.parse(plantId));
-  savedPlantObjects.add(newPlant);
-  print("Saved plant");
-}
+class SavedPlantsListNotifier with ChangeNotifier {
+  List<String> savedPlants = <String>[];
+  List<String> get plants => savedPlants.toList();
 
-Future<void> removePlant(String plantId) async {
-  final storage = await SharedPreferences.getInstance();
-  savedPlants.remove(plantId);
-  await storage.setStringList('savedPlants', savedPlants);
-  for (int i = 0; i < savedPlantObjects.length; ++i) {
-    if (savedPlantObjects[i].id.toString() == plantId) {
-      savedPlantObjects.removeAt(i);
+  Future<void> addPlant(String plantId) async {
+    final storage = await SharedPreferences.getInstance();
+    final list = storage.getStringList('savedPlants') ?? [];
+
+    if (!list.contains(plantId)) {
+      list.add(plantId);
+      await storage.setStringList('savedPlants', list);
     }
+    savedPlants = list;
+    notifyListeners();
+    print("added plant -> $savedPlants");
   }
-  await storage.setStringList('savedPlants', savedPlants);
-  print("removed Plant");
-}
 
-clearStorage() async {
-  final storage = await SharedPreferences.getInstance();
-  await storage.clear();
-}
+  Future<void> removePlant(String plantId) async {
+    final storage = await SharedPreferences.getInstance();
+    final list = storage.getStringList('savedPlants') ?? [];
 
-clearPlants() async {
-  final storage = await SharedPreferences.getInstance();
-  await storage.setStringList('savedPlants', []);
-  print("cleared Plants");
+    list.remove(plantId);
+    await storage.setStringList('savedPlants', list);
+
+    savedPlants = list;
+    notifyListeners();
+    print("removed plant -> $savedPlants");
+  }
+
+  Future<void> loadPlants() async {
+    final storage = await SharedPreferences.getInstance();
+    savedPlants = storage.getStringList('savedPlants') ?? [];
+    notifyListeners();
+    print("loaded plants");
+  }
 }

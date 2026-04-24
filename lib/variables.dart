@@ -1,4 +1,4 @@
-import 'objects.dart' show Plant;
+import 'storage.dart';
 
-List<String> savedPlants = [];
-List<Plant> savedPlantObjects = [];
+final plantNotifier = SavedPlantsListNotifier();
+final themeNotifier = SavedColorSchemeModeNotifier();

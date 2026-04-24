@@ -1,5 +1,5 @@
 class previewPlant {
-  final int id;
+  final String id;
   final String commonName;
   final String family;
   final String genus;
@@ -7,13 +7,13 @@ class previewPlant {
   final String scientificName;
 
   const previewPlant({required this.id, required this.commonName, required this.family, required this.genus, required this.imageUrl, required this.scientificName});
-  int getId() {
+  String getId() {
     return this.id;
   }
 }
 
 class Plant {
-  final int id;
+  final String id;
   final String commonName;
   final String scientificName;
   final String imageUrl;

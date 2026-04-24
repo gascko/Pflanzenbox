@@ -12,18 +12,25 @@ I made this litte App for University ([DHGE](https://www.dhge.de/))
 
 # Storyboard 🧩
 
-```mermaid
-kanban
-    Todo
-        Als Nutzer möchte ich mir Details einer Pflanzen ansehen, um mehr über die Pflanze zu erfahren
-        Als Nutzer möchte ich mir Pflanzen speichern können, um mir Pflanzen dauerhaft zu sichern
-        Als Nutzer möchte ich Pflanzen auch entspeichern können, um alte Pflanzen die mich nicht mehr interessieren zu entfernen
-        Als Nutzer möchte ich zwischen Light-Mode und Dark-Mode wechseln können
-        Als Entwickler sollte es die Möglichkeit geben meinen persönlichen API-Code für Trefle eingeben können, um keinen vorgegebenen API-Schlüssel im Code vorzugeben 📡
-    Working
-    Done
-        Als Nutzer möchte ich Pflanzen suchen können, um neue Pflanzen zu finden 🌻
-```
+| Suchen                                             | Details anzeigen        | Speichern                            |Löschen|Modus setzen| API-KEY setzen   |
+|----------------------------------------------------|-------------------------|--------------------------------------|---|---|------------------|
+| Texteingabe                                        | Pflanzenfamilie         | Scrollen durch gespeicherte Pflanzen |Gespeicherte Pflanzen löschen|Light-Darkmodus setzen|Texteingabe für API-Schlüssel|
+| Scrollen durch Ergebnisse                          | Ort                     | Löschen von Pflanzen                 |
+| Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie | Bild                    |Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie|
+| Ergebnisse klickbar (Detailansicht)                | Gattung                 |
+|| Art                     |
+|| Essbar?                 |
+|| Blütenfarbe falls Blume |
+|| Same oder Früchte       |
+|| Aussaat                 |
+|| Licht                   |
+|| Luftfeuchte             |
+|| Blütezeit               |
+|| Wachstumszeitraum       |
+|| Niederschlag (min/max)  |
+|| Temparatur (min/max)    |
+|| Speichern               |
+|| Teilen                  |
 
 # Mockup
 

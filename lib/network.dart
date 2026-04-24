@@ -14,7 +14,7 @@ Future<List <previewPlant>> searchPlants(String searchTerm) async {
     final trefleData = jsonDecode(response.body);
     for (int i = 0; i < 10; i++) {
       previewPlant newPreviewPlant = previewPlant(
-          id:(trefleData['data'][i]['id']).toInt(),
+          id: trefleData['data'][i]['id'].toString(),
           commonName: trefleData['data'][i]['common_name'] ?? "",
           family: trefleData['data'][i]['family'] ?? "",
           genus: trefleData['data'][i]['genus'] ?? "",
@@ -30,7 +30,7 @@ Future<List <previewPlant>> searchPlants(String searchTerm) async {
   }
 }
 
-Future<Plant> searchPlant(int plantId) async {
+Future<Plant> searchPlant(String plantId) async {
   final response = await http.get(
     Uri.parse('https://trefle.io/api/v1/plants/$plantId?token=***REMOVED***'),
     headers: {'Accept': 'application/json'},
@@ -39,7 +39,7 @@ Future<Plant> searchPlant(int plantId) async {
   if (response.statusCode == 200) {
     final trefleData = jsonDecode(response.body);
     Plant newPlant = Plant(
-      id: (trefleData['data']['id']).toInt(),
+      id: trefleData['data']['id'].toString(),
       commonName: trefleData['data']['common_name'] ?? "",
       scientificName: trefleData['data']['scientific_name'] ?? "",
       imageUrl: trefleData['data']['image_url'],

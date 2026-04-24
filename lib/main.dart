@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pflanzenbox/storage.dart';
 import 'pages/settingsPage.dart';
 import 'pages/savedPlantsPage.dart';
 import 'pages/searchPage.dart';
+import 'variables.dart';
 
 class AppTheme {
   static const Color seed = Color(0xFF1B9721);
@@ -28,22 +28,27 @@ class AppTheme {
   }
 }
 
-void main() async  {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  loadPlants();
-  runApp(const mobapApp());
+  await plantNotifier.loadPlants();
+  await themeNotifier.loadMode();
+  runApp(const pflanzenboxApp());
 }
 
-class mobapApp extends StatelessWidget {
-  const mobapApp({super.key});
+class pflanzenboxApp extends StatelessWidget {
+  const pflanzenboxApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: AppTheme.light(),
-        darkTheme: AppTheme.dark(),
-        themeMode: ThemeMode.system,
-        home: navigationBar());
+    return AnimatedBuilder(
+          animation: themeNotifier,
+          builder: (context, _) {
+            return MaterialApp(
+                theme: AppTheme.light(),
+                darkTheme: AppTheme.dark(),
+                themeMode: themeNotifier.mode,
+                home: navigationBar());
+          });
   }
 }
 
@@ -58,9 +63,9 @@ class NavigationBarState extends State<navigationBar> {
   int currentPageIndex = 0;
 
   final List<Widget> pagesList = const [
-    searchPage(),
-    savedPlantsPage(),
-    settingsPage(),
+    SearchPage(),
+    SavedPlantsPage(),
+    SettingsPage(),
   ];
 
   @override
@@ -76,7 +81,6 @@ class NavigationBarState extends State<navigationBar> {
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
-
           });
         },
         selectedIndex: currentPageIndex,

@@ -1,25 +1,44 @@
 import 'package:flutter/material.dart';
 import '../objects.dart' show Plant;
-import '../variables.dart' show savedPlantObjects;
+import '../variables.dart';
+import '../network.dart' show searchPlant;
+import 'plantDetailsPage.dart';
 
-class savedPlantsPage extends StatefulWidget {
-  const savedPlantsPage({super.key});
+class SavedPlantsPage extends StatefulWidget {
+  const SavedPlantsPage({super.key});
 
   @override
-  State<savedPlantsPage> createState() => savedPlantsPageState();
+  State<SavedPlantsPage> createState() => SavedPlantsPageState();
 }
 
-class savedPlantsPageState extends State<savedPlantsPage> {
+class SavedPlantsPageState extends State<SavedPlantsPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('My Plants 🌲', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
-        body: Column(
-            children: [
-              for (final plant in savedPlantObjects)
-                plantCard(plant: plant),
-            ]
-        )
+      appBar: AppBar(title: Text("My Plants", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
+        body: AnimatedBuilder(
+          animation: plantNotifier,
+          builder: (context, _) {
+            final plants = plantNotifier.plants;
+
+            if (plants.isEmpty) {
+              return const Center(child: Text("Keine Pflanzen gespeichert."));
+            }
+
+            return ListView.builder(
+              itemCount: plants.length,
+              itemBuilder: (context, i) =>
+                  FutureBuilder<Plant>(
+                    future: searchPlant(plants[i]),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return CircularProgressIndicator();
+                      return plantCard(plant: snapshot);
+                    },
+                  )
+            );
+          },
+        ),
     );
   }
 }
@@ -27,13 +46,18 @@ class savedPlantsPageState extends State<savedPlantsPage> {
 class plantCard extends StatelessWidget {
   plantCard({super.key, required this.plant});
 
-  final Plant plant;
+  AsyncSnapshot<Plant> plant;
 
   @override
   Widget build(BuildContext context) {
     return Card(
         clipBehavior: Clip.hardEdge,
         child: InkWell(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => plantDetailsPage(id: plant.data!.id),
+                )),
             child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -44,7 +68,7 @@ class plantCard extends StatelessWidget {
                           child: SizedBox(
                               height: MediaQuery.of(context).size.height / 10,
                               width: MediaQuery.of(context).size.width / 3,
-                              child: Image.network(plant.imageUrl, fit: BoxFit.cover)
+                              child: Image.network(plant.data!.imageUrl, fit: BoxFit.cover)
                           )
                       ),
                       SizedBox(width: 12),
@@ -52,15 +76,15 @@ class plantCard extends StatelessWidget {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(plant.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text(plant.data!.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 SizedBox(height: 3),
-                                Text(plant.scientificName, style: TextStyle(fontStyle: FontStyle.italic)),
+                                Text(plant.data!.scientificName, style: TextStyle(fontStyle: FontStyle.italic)),
                                 SizedBox(height: 10),
                                 Row(
                                     children: [
-                                      Text(plant.familyName),
+                                      Text(plant.data!.familyName),
                                       SizedBox(width: 10),
-                                      Text("(${plant.genus})")
+                                      Text("(${plant.data!.genus})")
                                     ]
                                 )
                               ]

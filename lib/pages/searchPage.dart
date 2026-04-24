@@ -4,14 +4,14 @@ import '../network.dart' show searchPlants;
 import '../objects.dart' show previewPlant;
 import 'plantDetailsPage.dart' show plantDetailsPage;
 
-class searchPage extends StatefulWidget {
-  const searchPage({super.key});
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
 
   @override
-  State<searchPage> createState() => searchPageState();
+  State<SearchPage> createState() => SearchPageState();
 }
 
-class searchPageState extends State<searchPage> {
+class SearchPageState extends State<SearchPage> {
   List<previewPlant> plantList = [];
 
   Future<void> reloadPlantCards(String searchQuery) async {
@@ -25,7 +25,7 @@ class searchPageState extends State<searchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Search for Plants 🌻')),
+        appBar: AppBar(title: Text("Search", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
         body: Column(
             children: [
               Padding(padding: const EdgeInsets.all(16),
@@ -59,7 +59,7 @@ class plantCard extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (context) => plantDetailsPage(id: plant.getId()),
+            builder: (context) => plantDetailsPage(id: plant.id),
         )),
         child: Padding(
           padding: const EdgeInsets.all(12),

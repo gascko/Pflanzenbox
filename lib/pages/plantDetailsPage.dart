@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../objects.dart' show Plant;
 import '../network.dart' show searchPlant;
-import '../storage.dart' show addPlant;
+import '../variables.dart';
 
 class plantDetailsPage extends StatefulWidget {
-  final int id;
+  final String id;
   const plantDetailsPage({super.key, required this.id});
 
   @override
@@ -14,7 +14,7 @@ class plantDetailsPage extends StatefulWidget {
 class plantDetailsPageState extends State<plantDetailsPage> {
   plantDetailsPageState({required this.plantId});
 
-  final int plantId;
+  final String plantId;
   Plant? plant;
 
   @override
@@ -63,15 +63,23 @@ class plantDetailsPageState extends State<plantDetailsPage> {
                   SizedBox(height: 20),
                   Row(
                       children: [
+                        plantNotifier.plants.contains(plantId) ?
                         FloatingActionButton(
                           onPressed: () {
-                            addPlant(plantId.toString());
-                          },
-                          shape: null,
-                          child: const Icon(Icons.favorite)
-                        ),
-                        SizedBox(width: 10),
-                        shareButton(),
+                            setState(() {
+                              plantNotifier.removePlant(plantRecieved.id);
+                            });
+                            },
+                          child: const Icon(Icons.favorite_border),
+                        ) :
+                        FloatingActionButton(
+                          onPressed: () {
+                            setState(() {
+                              plantNotifier.addPlant(plantRecieved.id);
+                            });
+                            },
+                          child: const Icon(Icons.favorite),
+                        )
                       ]
                   ),
                   SizedBox(height: 20),
@@ -102,25 +110,6 @@ class plantDetailsPageState extends State<plantDetailsPage> {
                 ],
               )
           )
-    );
-  }
-}
-
-class shareButton extends StatefulWidget {
-  const shareButton({super.key});
-
-  @override
-  State<shareButton> createState() => shareButtonState();
-}
-
-class shareButtonState extends State<shareButton> {
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-      },
-      shape: null,
-      child: const Icon(Icons.share),
     );
   }
 }
