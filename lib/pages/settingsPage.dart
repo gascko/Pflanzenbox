@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../variables.dart';
+import '../storage.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -17,7 +18,7 @@ class SettingsPage extends StatelessWidget {
                 const Center(child: ModeRadioSwitch()),
                 SizedBox(height: 20),
                 Text("Treffle API", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                SearchTextField(),
+                ApiKeyTextField(),
               ],
             )
         )
@@ -66,14 +67,20 @@ class ModeRadioSwitchState extends State<ModeRadioSwitch> {
   }
 }
 
-class SearchTextField extends StatelessWidget {
-  const SearchTextField({super.key});
+class ApiKeyTextField extends StatefulWidget {
+  const ApiKeyTextField({super.key});
+
+  @override
+  State<ApiKeyTextField> createState() => ApiKeyTextFieldState();
+}
+
+class ApiKeyTextFieldState extends State<ApiKeyTextField> {
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      maxLength: 20,
       obscureText: true,
+      onSubmitted: (value) => setApiKey(value.trim()),
       decoration: InputDecoration(
         suffixIcon: Icon(Icons.clear),
         labelText: 'Your Treffle API-KEY',

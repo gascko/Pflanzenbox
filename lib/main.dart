@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pflanzenbox/storage.dart';
 import 'pages/settingsPage.dart';
 import 'pages/savedPlantsPage.dart';
 import 'pages/searchPage.dart';
@@ -32,6 +33,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await plantNotifier.loadPlants();
   await themeNotifier.loadMode();
+  await loadApiKey();
   runApp(const pflanzenboxApp());
 }
 

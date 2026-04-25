@@ -9,6 +9,7 @@ I made this litte App for University ([DHGE](https://www.dhge.de/))
 * 🛠️ [Flutter](https://flutter.dev/)
 * 🪻 [Trefle API Key](https://trefle.io/)
 * 📡 http Package (Add to Project with `dart pub add http shared_preferences`)
+* Run `flutter pub get`
 
 # Storyboard 🧩
 

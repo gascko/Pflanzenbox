@@ -1,6 +1,18 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+Future<String> loadApiKey() async {
+  final storage = await SharedPreferences.getInstance();
+  print("loaded api key $storage.getString('apiKey')");
+  return storage.getString('apiKey') ?? '';
+}
+
+Future<void> setApiKey(String newApiKey) async {
+  final storage = await SharedPreferences.getInstance();
+  await storage.setString('apiKey', newApiKey);
+  print("set new Api key -> $newApiKey");
+}
+
 class SavedColorSchemeModeNotifier with ChangeNotifier {
    ThemeMode themeMode = ThemeMode.system;
    ThemeMode get mode => themeMode;

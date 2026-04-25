@@ -23,7 +23,13 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
             final plants = plantNotifier.plants;
 
             if (plants.isEmpty) {
-              return const Center(child: Text("Keine Pflanzen gespeichert."));
+              return Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height / 4),
+                  Icon(Icons.bookmark, size: MediaQuery.of(context).size.width / 3),
+                  Text("No Plants saved yet", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                ],
+              );
             }
 
             return ListView.builder(
@@ -32,8 +38,8 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
                   FutureBuilder<Plant>(
                     future: searchPlant(plants[i]),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) return CircularProgressIndicator();
-                      return plantCard(plant: snapshot);
+                      if (!snapshot.hasData) return Card(child: CircularProgressIndicator());
+                      return PlantCard(plant: snapshot);
                     },
                   )
             );
@@ -43,8 +49,8 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
   }
 }
 
-class plantCard extends StatelessWidget {
-  plantCard({super.key, required this.plant});
+class PlantCard extends StatelessWidget {
+  PlantCard({super.key, required this.plant});
 
   AsyncSnapshot<Plant> plant;
 
@@ -64,12 +70,18 @@ class plantCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: SizedBox(
-                              height: MediaQuery.of(context).size.height / 10,
-                              width: MediaQuery.of(context).size.width / 3,
-                              child: Image.network(plant.data!.imageUrl, fit: BoxFit.cover)
-                          )
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height / 10,
+                          width: MediaQuery.of(context).size.width / 3,
+                          child: Image.network(
+                            plant.data!.plantData['image_url']['value'],
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
+                            },
+                          ),
+                        ),
                       ),
                       SizedBox(width: 12),
                       Expanded(
@@ -78,13 +90,13 @@ class plantCard extends StatelessWidget {
                               children: [
                                 Text(plant.data!.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                 SizedBox(height: 3),
-                                Text(plant.data!.scientificName, style: TextStyle(fontStyle: FontStyle.italic)),
+                                Text(plant.data!.plantData['scientific_name']['value'], style: TextStyle(fontStyle: FontStyle.italic)),
                                 SizedBox(height: 10),
                                 Row(
                                     children: [
-                                      Text(plant.data!.familyName),
+                                      Text(plant.data!.plantData['family_common_name']['value']),
                                       SizedBox(width: 10),
-                                      Text("(${plant.data!.genus})")
+                                      Text("(${plant.data!.plantData['year']['value']})")
                                     ]
                                 )
                               ]

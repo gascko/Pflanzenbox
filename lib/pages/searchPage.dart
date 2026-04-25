@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../network.dart' show searchPlants;
-import '../objects.dart' show previewPlant;
+import '../objects.dart';
 import 'plantDetailsPage.dart' show plantDetailsPage;
 
 class SearchPage extends StatefulWidget {
@@ -12,13 +12,19 @@ class SearchPage extends StatefulWidget {
 }
 
 class SearchPageState extends State<SearchPage> {
-  List<previewPlant> plantList = [];
+  List<Plant> plantList = [];
 
   Future<void> reloadPlantCards(String searchQuery) async {
     final plants = await searchPlants(searchQuery);
 
     setState(() {
       plantList = plants;
+    });
+  }
+
+  void clearPlantCards() {
+    setState(() {
+      plantList.clear();
     });
   }
 
@@ -29,8 +35,15 @@ class SearchPageState extends State<SearchPage> {
         body: Column(
             children: [
               Padding(padding: const EdgeInsets.all(16),
-                  child: Container(
-                      child: SearchTextField(onSubmitted: reloadPlantCards))),
+                  child: SearchTextField(onSubmitted: reloadPlantCards, onClear: clearPlantCards)),
+              if (plantList.isEmpty)
+                Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / 4),
+                    Icon(Icons.search, size: MediaQuery.of(context).size.width / 3),
+                    Text("Search your favorite Plants", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  ],
+                ),
               Expanded(
                 child: ListView(
                   children: [
@@ -49,7 +62,7 @@ class SearchPageState extends State<SearchPage> {
 class plantCard extends StatelessWidget {
   plantCard({super.key, required this.plant});
 
-  final previewPlant plant;
+  final Plant plant;
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +80,18 @@ class plantCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height / 10,
                 width: MediaQuery.of(context).size.width / 3,
-                child: Image.network(plant.imageUrl, fit: BoxFit.cover)
-              )
+                child: Image.network(
+                  plant.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
+                  },
+                ),
+              ),
             ),
             SizedBox(width: 12),
             Expanded(
@@ -82,14 +101,6 @@ class plantCard extends StatelessWidget {
                   Text(plant.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 3),
                   Text(plant.scientificName, style: TextStyle(fontStyle: FontStyle.italic)),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text(plant.family),
-                      SizedBox(width: 10),
-                      Text("(${plant.genus})")
-                      ]
-                    )
                   ]
                 )
               )
@@ -103,16 +114,22 @@ class plantCard extends StatelessWidget {
 
 class SearchTextField extends StatelessWidget {
   final void Function(String value) onSubmitted;
-  const SearchTextField({super.key, required this.onSubmitted});
+  final void Function() onClear;
+  final fieldText = TextEditingController();
+  SearchTextField({super.key, required this.onSubmitted, required this.onClear});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       maxLength: 20,
+      controller: fieldText,
       onSubmitted: (value) => onSubmitted(value.trim()),
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
-        suffixIcon: Icon(Icons.clear),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: onClear,
+        ),
         hintText: 'Search for Plants',
         border: OutlineInputBorder(),
       ),

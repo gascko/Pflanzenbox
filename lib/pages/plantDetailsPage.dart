@@ -57,7 +57,13 @@ class plantDetailsPageState extends State<plantDetailsPage> {
                       child: SizedBox(
                         height: MediaQuery.of(context).size.height / 3,
                         width: MediaQuery.of(context).size.width,
-                        child: Image.network(plantRecieved.imageUrl, fit: BoxFit.cover),
+                        child: Image.network(
+                          plantRecieved.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
+                          },
+                        ),
                       )
                   ),
                   SizedBox(height: 20),
@@ -82,34 +88,38 @@ class plantDetailsPageState extends State<plantDetailsPage> {
                         )
                       ]
                   ),
-                  SizedBox(height: 20),
-                  Text(plantRecieved.commonName, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10),
-                  Text("${plantRecieved.scientificName} (${plantRecieved.year})", style: TextStyle(fontStyle: FontStyle.italic)),
-                  SizedBox(height: 20),
-                  Text("Family", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10),
-                  Flexible(child: Text(plantRecieved.familyName, style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic))),
-                  SizedBox(width: 10),
-                  if (plantRecieved.familyCommonName != "")
-                    Flexible(child: Text("(${plantRecieved.familyCommonName})", style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic))),
-                  SizedBox(height: 5),
-                  Text("Observations", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10),
-                  Flexible(child: Text(plantRecieved.observations, style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic))),
-                  SizedBox(height: 5),
-                  Text("Genus", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10),
-                  Text(plantRecieved.genus, style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
-                  SizedBox(height: 5),
-                  Text("Species", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 10),
-                  Text(plantRecieved.speciesScientificName, style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
-                  if (plantRecieved.speciesCommonName != "")
-                    Text("(${plantRecieved.speciesCommonName})", style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
-                ],
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        for (final values in plantRecieved.plantData.values)
+                          DataCard(name: values['name'], value: values['value']),
+                      ],
+                    ),
+                  ),
+                ]
               )
           )
+      );
+  }
+}
+
+class DataCard extends StatelessWidget {
+  const DataCard({super.key, required this.name, required this.value});
+
+  final String name;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          children: [
+            Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            Spacer(),
+            Text(value, style: TextStyle(fontSize: 20)),
+          ],
+        )
     );
   }
 }
