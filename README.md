@@ -13,25 +13,33 @@ I made this litte App for University ([DHGE](https://www.dhge.de/))
 
 # Storyboard 🧩
 
-| Suchen                                             | Details anzeigen        | Speichern                            |Löschen|Modus setzen| API-KEY setzen   |
-|----------------------------------------------------|-------------------------|--------------------------------------|---|---|------------------|
-| Texteingabe                                        | Pflanzenfamilie         | Scrollen durch gespeicherte Pflanzen |Gespeicherte Pflanzen löschen|Light-Darkmodus setzen|Texteingabe für API-Schlüssel|
-| Scrollen durch Ergebnisse                          | Ort                     | Löschen von Pflanzen                 |
-| Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie | Bild                    |Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie|
-| Ergebnisse klickbar (Detailansicht)                | Gattung                 |
-|| Art                     |
-|| Essbar?                 |
-|| Blütenfarbe falls Blume |
-|| Same oder Früchte       |
-|| Aussaat                 |
-|| Licht                   |
-|| Luftfeuchte             |
-|| Blütezeit               |
-|| Wachstumszeitraum       |
-|| Niederschlag (min/max)  |
-|| Temparatur (min/max)    |
-|| Speichern               |
-|| Teilen                  |
+```mermaid
+kanban
+    columnSuchen[Suchen]
+        task1[Texteingabe]
+        task2[Scrollen durch Ergebnisse]
+        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie]
+        task4[Ergebnisse klickbar in Detailansicht]
+    columnDetails[Details anzeigen]
+        task1[Pflanzenfamilie]
+        task2[Ort]
+        task3[Bilder]
+        task4[Gattung]
+        task5[Art]
+        task6[Essbar?]
+        task7[Speichern]
+        task8[Teilen]
+    columnSpeichern[Speichern]
+        task1[Scrollen durch gespeicherte Pflanzen]
+        task2[Löschen von Pflanzen]
+        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie]
+    columnLöschen[Löschen]
+        task1[Gespeicherte Pflanzen löschen]
+    columnLight[Dark / Light Modus]
+        task1[Light-Darkmodus setzen]
+    columnApi[API-Key setzen]
+        task1[Texteingabe für API-Schlüssel]
+```
 
 # Mockup
 

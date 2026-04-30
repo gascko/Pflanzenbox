@@ -2,7 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../network.dart' show searchPlants;
 import '../objects.dart';
-import 'plantDetailsPage.dart' show plantDetailsPage;
+import 'plantDetailsPage.dart' show PlantDetailsPage;
+
+String searchQuery = "";
+int currentPage = 1;
+int maxPages = 1;
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -13,12 +17,16 @@ class SearchPage extends StatefulWidget {
 
 class SearchPageState extends State<SearchPage> {
   List<Plant> plantList = [];
+  final ScrollController plantScrollController = ScrollController();
+  bool showPageNavigation = false;
 
-  Future<void> reloadPlantCards(String searchQuery) async {
-    final plants = await searchPlants(searchQuery);
+  Future<void> reloadPlantCards() async {
+    final (:plants, :totalPages) = await searchPlants(searchQuery, currentPage);
+    scrollToTop(context);
 
     setState(() {
       plantList = plants;
+      maxPages = totalPages;
     });
   }
 
@@ -26,6 +34,16 @@ class SearchPageState extends State<SearchPage> {
     setState(() {
       plantList.clear();
     });
+  }
+
+
+  void scrollToTop(BuildContext context) {
+    final controller = PrimaryScrollController.of(context);
+    controller.animateTo(
+      0,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   @override
@@ -44,23 +62,62 @@ class SearchPageState extends State<SearchPage> {
                     Text("Search your favorite Plants", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   ],
                 ),
-              Expanded(
-                child: ListView(
+              if (plantList.isNotEmpty)
+                Row(
                   children: [
-                    for (final plant in plantList)
-                      plantCard(plant: plant),
+                    if (currentPage > 1)
+                      Expanded(
+                          child: ElevatedButton(onPressed: () {
+                            currentPage = 1;
+                            reloadPlantCards();
+                          },
+                              child: const Icon(Icons.keyboard_double_arrow_left))
+                      ),
+                    if (currentPage > 1)
+                      Expanded(
+                          child: ElevatedButton(onPressed: () {
+                            currentPage -= 1;
+                            reloadPlantCards();
+                          },
+                              child: const Icon(Icons.keyboard_arrow_left))
+                      ),
+                    if (currentPage < maxPages)
+                      Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                  currentPage += 1;
+                                  reloadPlantCards();
+                              },
+                              child: const Icon(Icons.keyboard_arrow_right))
+                      ),
+                    if (currentPage < maxPages)
+                      Expanded(
+                          child: ElevatedButton(
+                              onPressed: () {
+                                currentPage = maxPages;
+                                reloadPlantCards();
+                              },
+                              child: const Icon(Icons.keyboard_double_arrow_right))
+                      )
                   ],
                 ),
-              ),
-
+                Expanded(
+                  child: ListView.builder(
+                    primary: true,
+                      itemCount: plantList.length,
+                      itemBuilder: (context, index) {
+                        return PlantCard(plant: plantList[index]);
+                      }
+                    )
+                )
             ]
         )
     );
   }
 }
 
-class plantCard extends StatelessWidget {
-  plantCard({super.key, required this.plant});
+class PlantCard extends StatelessWidget {
+  const PlantCard({super.key, required this.plant});
 
   final Plant plant;
 
@@ -72,7 +129,7 @@ class plantCard extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute<void>(
-            builder: (context) => plantDetailsPage(id: plant.id),
+            builder: (context) => PlantDetailsPage(plantId: plant.plantId),
         )),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -85,10 +142,10 @@ class plantCard extends StatelessWidget {
                 height: MediaQuery.of(context).size.height / 10,
                 width: MediaQuery.of(context).size.width / 3,
                 child: Image.network(
-                  plant.imageUrl,
+                  plant.previewImage,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
+                    return Center(child: Icon(Icons.broken_image, size: 64));
                   },
                 ),
               ),
@@ -113,7 +170,7 @@ class plantCard extends StatelessWidget {
 }
 
 class SearchTextField extends StatelessWidget {
-  final void Function(String value) onSubmitted;
+  final void Function() onSubmitted;
   final void Function() onClear;
   final fieldText = TextEditingController();
   SearchTextField({super.key, required this.onSubmitted, required this.onClear});
@@ -121,9 +178,12 @@ class SearchTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      maxLength: 20,
       controller: fieldText,
-      onSubmitted: (value) => onSubmitted(value.trim()),
+      onSubmitted: (value) => {
+        searchQuery = value.trim(),
+        currentPage = 1,
+        onSubmitted()
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.search),
         suffixIcon: IconButton(

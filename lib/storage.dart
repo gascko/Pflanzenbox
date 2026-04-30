@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 
 Future<String> loadApiKey() async {
   final storage = await SharedPreferences.getInstance();
-  print("loaded api key $storage.getString('apiKey')");
   return storage.getString('apiKey') ?? '';
 }
 
 Future<void> setApiKey(String newApiKey) async {
   final storage = await SharedPreferences.getInstance();
   await storage.setString('apiKey', newApiKey);
-  print("set new Api key -> $newApiKey");
 }
 
 class SavedColorSchemeModeNotifier with ChangeNotifier {
@@ -44,7 +42,6 @@ class SavedColorSchemeModeNotifier with ChangeNotifier {
      int storageMode = storage.getInt('themeMode') ?? 0;
      themeMode = intToThemeMode(storageMode);
      notifyListeners();
-     print("loaded mode -> $themeMode");
   }
 
   Future<void> setMode(ThemeMode mode) async {
@@ -52,7 +49,6 @@ class SavedColorSchemeModeNotifier with ChangeNotifier {
      final storage = await SharedPreferences.getInstance();
      await storage.setInt('themeMode', themeModeToInt(mode));
      notifyListeners();
-     print("set mode -> $themeMode");
   }
 }
 
@@ -70,25 +66,26 @@ class SavedPlantsListNotifier with ChangeNotifier {
     }
     savedPlants = list;
     notifyListeners();
-    print("added plant -> $savedPlants");
+    print(list);
+    print(plantId);
   }
 
   Future<void> removePlant(String plantId) async {
     final storage = await SharedPreferences.getInstance();
     final list = storage.getStringList('savedPlants') ?? [];
+    print(plantId);
+    print(list);
 
     list.remove(plantId);
     await storage.setStringList('savedPlants', list);
-
     savedPlants = list;
     notifyListeners();
-    print("removed plant -> $savedPlants");
+    print(list);
   }
 
   Future<void> loadPlants() async {
     final storage = await SharedPreferences.getInstance();
     savedPlants = storage.getStringList('savedPlants') ?? [];
     notifyListeners();
-    print("loaded plants");
   }
 }

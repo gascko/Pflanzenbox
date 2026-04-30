@@ -39,73 +39,69 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
                     future: searchPlant(plants[i]),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return Card(child: CircularProgressIndicator());
-                      return PlantCard(plant: snapshot);
+                      return Card(
+                          clipBehavior: Clip.hardEdge,
+                          child: InkWell(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => PlantDetailsPage(plantId: snapshot.data!.plantId),
+                                  )),
+                              child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: SizedBox(
+                                            height: MediaQuery.of(context).size.height / 10,
+                                            width: MediaQuery.of(context).size.width / 3,
+                                            child: Image.network(
+                                              snapshot.data!.previewImage,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Center(child: Icon(Icons.broken_image, size: 64));
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 12),
+                                        Expanded(
+                                            child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(snapshot.data!.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                                  SizedBox(height: 3),
+                                                  Text(snapshot.data!.scientificName, style: TextStyle(fontStyle: FontStyle.italic)),
+                                                  SizedBox(height: 10),
+                                                  Row(
+                                                      children: [
+                                                        Text(snapshot.data!.familyCommonName),
+                                                        SizedBox(width: 10),
+                                                      ]
+                                                  )
+                                                ]
+                                            )
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              plantNotifier.removePlant(snapshot.data!.plantId);
+                                            });
+                                          },
+                                          icon: const Icon(Icons.delete),
+                                        ),
+                                      ]
+                                  )
+                              )
+                          )
+                      );
                     },
                   )
             );
           },
         ),
-    );
-  }
-}
-
-class PlantCard extends StatelessWidget {
-  PlantCard({super.key, required this.plant});
-
-  AsyncSnapshot<Plant> plant;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        clipBehavior: Clip.hardEdge,
-        child: InkWell(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => plantDetailsPage(id: plant.data!.id),
-                )),
-            child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height / 10,
-                          width: MediaQuery.of(context).size.width / 3,
-                          child: Image.network(
-                            plant.data!.plantData['image_url']['value'],
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(plant.data!.commonName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                SizedBox(height: 3),
-                                Text(plant.data!.plantData['scientific_name']['value'], style: TextStyle(fontStyle: FontStyle.italic)),
-                                SizedBox(height: 10),
-                                Row(
-                                    children: [
-                                      Text(plant.data!.plantData['family_common_name']['value']),
-                                      SizedBox(width: 10),
-                                      Text("(${plant.data!.plantData['year']['value']})")
-                                    ]
-                                )
-                              ]
-                          )
-                      )
-                    ]
-                )
-            )
-        )
     );
   }
 }

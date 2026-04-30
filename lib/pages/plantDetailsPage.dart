@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../objects.dart' show Plant;
-import '../network.dart' show searchPlant;
 import '../variables.dart';
+import '../network.dart' show searchPlant;
 
-class plantDetailsPage extends StatefulWidget {
-  final String id;
-  const plantDetailsPage({super.key, required this.id});
+class PlantDetailsPage extends StatefulWidget {
+  final String plantId;
+  const PlantDetailsPage({super.key, required this.plantId});
 
   @override
-  State<plantDetailsPage> createState() => plantDetailsPageState(plantId: this.id);
+  State<PlantDetailsPage> createState() => PlantDetailsPageState(plantId: this.plantId);
 }
 
-class plantDetailsPageState extends State<plantDetailsPage> {
-  plantDetailsPageState({required this.plantId});
+class PlantDetailsPageState extends State<PlantDetailsPage> {
+  PlantDetailsPageState({required this.plantId});
 
   final String plantId;
   Plant? plant;
@@ -43,59 +43,280 @@ class plantDetailsPageState extends State<plantDetailsPage> {
 
     }
     final plantRecieved = plant!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return
       Scaffold(
           appBar: AppBar(title: Text(plantRecieved.commonName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
+          bottomSheet: Row(
+            children: [
+              Spacer(),
+              IconButton(
+                icon: const Icon(Icons.info, color: Colors.grey),
+                onPressed: () => showModalBottomSheet(
+                    context: context,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    builder: (BuildContext context) {
+                      return Container(
+                          height: 150,
+                          color: colorScheme.surface,
+                          child: Center(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 30),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.attribution),
+                                      Text(plantRecieved.author),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.bookmark),
+                                      Text(plantRecieved.bibliography),
+                                    ],
+                                  )
+                                ],
+                              )
+                          )
+                      );
+                    }
+                ),
+              ),
+            ],
+          ),
           body: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height / 3,
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.network(
-                          plantRecieved.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset('assets/placeholder.png', fit: BoxFit.cover);
-                          },
-                        ),
-                      )
+                  if (plantRecieved.images.isEmpty)
+                    Center(child: Icon(Icons.broken_image, size: 64)),
+                  if (plantRecieved.images.isNotEmpty)
+
+                  ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height / 3,
+                    minHeight: MediaQuery.of(context).size.height / 3
                   ),
-                  SizedBox(height: 20),
-                  Row(
-                      children: [
-                        plantNotifier.plants.contains(plantId) ?
-                        FloatingActionButton(
-                          onPressed: () {
-                            setState(() {
-                              plantNotifier.removePlant(plantRecieved.id);
-                            });
+                  child: PageView.builder(
+                      itemCount: plantRecieved.images.length,
+                      onPageChanged: (i) => setState(() => i),
+                      itemBuilder: (context, i) {
+                        return InteractiveViewer(
+                          minScale: 1,
+                          maxScale: 4,
+                          child: Image.network(
+                            plantRecieved.images[i],
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, progress) {
+                              if (progress == null) return child;
+                              return const Center(child: CircularProgressIndicator());
                             },
-                          child: const Icon(Icons.favorite_border),
-                        ) :
-                        FloatingActionButton(
-                          onPressed: () {
-                            setState(() {
-                              plantNotifier.addPlant(plantRecieved.id);
-                            });
-                            },
-                          child: const Icon(Icons.favorite),
-                        )
-                      ]
-                  ),
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        for (final values in plantRecieved.plantData.values)
-                          DataCard(name: values['name'], value: values['value']),
-                      ],
+                            errorBuilder: (_, __, ___) =>
+                            const Center(child: Icon(Icons.broken_image, size: 64)),
+                          ),
+                        );
+                      },
                     ),
                   ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      FloatingActionButton(
+                        onPressed: () {
+                          setState(() {
+                            plantNotifier.addPlant(plantRecieved.plantId);
+                          });
+                        },
+                        child: const Icon(Icons.favorite),
+                      ),
+                      SizedBox(width: 10),
+                      Spacer(),
+                      if (plantRecieved.status == 'accepted')
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            border: Border.all(
+                              color: colorScheme.primary,
+                              width: 3.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          width: 50,
+                          height: 50,
+                          child: Icon(Icons.verified),
+                        ),
+                      if (plantRecieved.vegetable)
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color:  colorScheme.surface,
+                            border: Border.all(
+                              color:  colorScheme.primary,
+                              width: 3.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          width: 50,
+                          height: 50,
+                          child: Icon(Icons.restaurant),
+                        ),
+                      if (plantRecieved.edible)
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            border: Border.all(
+                              color: colorScheme.primary,
+                              width: 3.0,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          width: 50,
+                          height: 50,
+                          child: Icon(Icons.room_service),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Table(
+                      columnWidths: const <int, TableColumnWidth>{
+                      0: FlexColumnWidth(),
+                      1: FlexColumnWidth(),
+                    },
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: <TableRow>[
+                        TableRow(
+                          children: <Widget>[
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("Family Common Name"),
+                              )
+                            ),
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Text(plantRecieved.familyCommonName, style: TextStyle(fontSize: 20)),
+                            ),
+                          ]
+                        ),
+                      TableRow(
+                          children: <Widget>[
+                            TableCell(
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("Slug"),
+                              )
+                            ),
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Text(plantRecieved.slug, style: TextStyle(fontSize: 20)),
+                            ),
+                          ]
+                      ),
+                      TableRow(
+                          children: <Widget>[
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("Genus"),
+                              )
+                            ),
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Text(plantRecieved.genus, style: TextStyle(fontSize: 20)),
+                            ),
+                          ]
+                      ),
+                      TableRow(
+                          children: <Widget>[
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("Scientific Name"),
+                              )
+                            ),
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Text(plantRecieved.scientificName, style: TextStyle(fontSize: 20)),
+                            ),
+                          ]
+                      ),
+                      TableRow(
+                          children: <Widget>[
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Container(
+                                margin: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text("Observations"),
+                              )
+                            ),
+                            TableCell(
+                              verticalAlignment: TableCellVerticalAlignment.top,
+                              child: Text(plantRecieved.observations, style: TextStyle(fontSize: 20)),
+                            ),
+                          ]
+                      ),
+                    ]
+                  )
                 ]
               )
           )
