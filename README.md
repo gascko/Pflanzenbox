@@ -13,35 +13,42 @@ I made this litte App for University ([DHGE](https://www.dhge.de/))
 
 # Storyboard 🧩
 
+> Aktuelles MVP: **3**
+
 ```mermaid
 kanban
     columnSuchen[Suchen]
-        task1[Texteingabe]
-        task2[Scrollen durch Ergebnisse]
-        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie]
-        task4[Ergebnisse klickbar in Detailansicht]
+        task1[Texteingabe **1**]
+        task2[Scrollen durch Ergebnisse **1**]
+        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie **1**]
+        task4[Ergebnisse klickbar in Detailansicht **2**]
+        task5[Suche Filtern]
     columnDetails[Details anzeigen]
-        task1[Pflanzenfamilie]
-        task2[Ort]
-        task3[Bilder]
-        task4[Gattung]
-        task5[Art]
-        task6[Essbar?]
-        task7[Speichern]
-        task8[Teilen]
+        task1[Pflanzenfamilie **2**]
+        task2[Ort mit kleiner Minimap?]
+        task3[Bilder zum durchswipen **2**]
+        task4[Gattung **2**]
+        task5[Art **2**]
+        task6[Essbar? **3**]
+        task7[Bilder Großansicht]
+        task8[Author Infos **3**]
     columnSpeichern[Speichern]
-        task1[Scrollen durch gespeicherte Pflanzen]
-        task2[Löschen von Pflanzen]
-        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie]
+        task1[Notification bei Speichern]
+        task2[Scrollen durch gespeicherte Pflanzen **2**]
+        task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie **2**]
+        task4[Ergebnisse klickbar in Detailansicht **3**]
     columnLöschen[Löschen]
         task1[Gespeicherte Pflanzen löschen]
+        task2[Notification bei löschen von Pflanze]
     columnLight[Dark / Light Modus]
-        task1[Light-Darkmodus setzen]
+        task1[Light-Darkmodus setzen **3**]
     columnApi[API-Key setzen]
-        task1[Texteingabe für API-Schlüssel]
+        task1[Texteingabe für API-Schlüssel **3**]
+    columnTeilen[Pflanze Teilen]
+        task1[Pflanzen Infos als PDF oder Bild teilen?]
 ```
 
-# Mockup
+# Mockup 🖼️
 
 Mockup erstellt mit [Microsoft Copilot](https://copilot.cloud.microsoft/)
 
