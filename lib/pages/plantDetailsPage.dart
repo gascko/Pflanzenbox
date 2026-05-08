@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../objects.dart' show Plant;
 import '../variables.dart';
 import '../network.dart' show searchPlant;
 
 class PlantDetailsPage extends StatefulWidget {
-  final String plantId;
   const PlantDetailsPage({super.key, required this.plantId});
 
+  final String plantId;
+
   @override
-  State<PlantDetailsPage> createState() => PlantDetailsPageState(plantId: this.plantId);
+  State<PlantDetailsPage> createState() => PlantDetailsPageState(plantId: plantId);
 }
 
 class PlantDetailsPageState extends State<PlantDetailsPage> {
@@ -25,7 +27,6 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
 
   Future<void> loadPlant() async {
     final plant = await searchPlant(plantId);
-    if (!mounted) return;
 
     setState(() {
       this.plant = plant;
@@ -42,12 +43,11 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
       );
 
     }
-    final plantRecieved = plant!;
+    final plantReceived = plant!;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return
-      Scaffold(
-          appBar: AppBar(title: Text(plantRecieved.commonName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
+    return Scaffold(
+          appBar: AppBar(title: Text(plantReceived.commonName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
           bottomSheet: Row(
             children: [
               Spacer(),
@@ -55,15 +55,11 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                 icon: const Icon(Icons.info, color: Colors.grey),
                 onPressed: () => showModalBottomSheet(
                     context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     builder: (BuildContext context) {
                       return Container(
-                          height: 150,
+                          height: 120,
                           color: colorScheme.surface,
                           child: Center(
                               child: Column(
@@ -72,15 +68,21 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                   Row(
                                     children: [
                                       Icon(Icons.attribution),
-                                      Text(plantRecieved.author),
+                                      Text(plantReceived.author),
                                     ],
                                   ),
                                   Row(
                                     children: [
                                       Icon(Icons.bookmark),
-                                      Text(plantRecieved.bibliography),
+                                      Text(plantReceived.bibliography),
                                     ],
-                                  )
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.assignment_ind),
+                                      Text("${plantReceived.plantId} : $plantId"),
+                                    ],
+                                  ),
                                 ],
                               )
                           )
@@ -95,58 +97,64 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (plantRecieved.images.isEmpty)
+                  if (plantReceived.images.isEmpty)
                     Center(child: Icon(Icons.broken_image, size: 64)),
-                  if (plantRecieved.images.isNotEmpty)
-
-                  ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height / 3,
-                    minHeight: MediaQuery.of(context).size.height / 3
-                  ),
-                  child: PageView.builder(
-                      itemCount: plantRecieved.images.length,
-                      onPageChanged: (i) => setState(() => i),
-                      itemBuilder: (context, i) {
-                        return InteractiveViewer(
-                          minScale: 1,
-                          maxScale: 4,
-                          child: Image.network(
-                            plantRecieved.images[i],
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) return child;
-                              return const Center(child: CircularProgressIndicator());
-                            },
-                            errorBuilder: (_, __, ___) =>
-                            const Center(child: Icon(Icons.broken_image, size: 64)),
-                          ),
-                        );
-                      },
+                  if (plantReceived.images.isNotEmpty)
+                    ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height / 3,
+                      minHeight: MediaQuery.of(context).size.height / 3
                     ),
-                  ),
+                    child: PageView.builder(
+                        itemCount: plantReceived.images.length,
+                        onPageChanged: (i) => setState(() => i),
+                        itemBuilder: (context, i) {
+                          return InteractiveViewer(
+                            child: CachedNetworkImage(
+                              imageUrl: plantReceived.images[i],
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) {
+                                return Center(child: Icon(Icons.broken_image, size: 64));
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            plantNotifier.addPlant(plantRecieved.plantId);
-                          });
+                      ListenableBuilder(
+                        listenable: plantNotifier,
+                        builder: (BuildContext context, Widget? child) {
+                          if (plantNotifier.savedPlants.contains(plantId)) {
+                            return FloatingActionButton(
+                              onPressed: () {
+                                setState(() {
+                                  plantNotifier.removePlant(plantId);
+                                });
+                              },
+                              child: const Icon(Icons.favorite),
+                            );
+                          }
+                          return FloatingActionButton(
+                            onPressed: () {
+                              setState(() {
+                                plantNotifier.addPlant(plantId);
+                              });
+                            },
+                            child: const Icon(Icons.favorite_border),
+                          );
                         },
-                        child: const Icon(Icons.favorite),
                       ),
                       SizedBox(width: 10),
                       Spacer(),
-                      if (plantRecieved.status == 'accepted')
+                      if (plantReceived.status == 'accepted')
                         Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: colorScheme.surface,
-                            border: Border.all(
-                              color: colorScheme.primary,
-                              width: 3.0,
-                            ),
+                            border: Border.all(color: colorScheme.primary, width: 3.0),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
@@ -154,15 +162,12 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                           height: 50,
                           child: Icon(Icons.verified),
                         ),
-                      if (plantRecieved.vegetable)
+                      if (plantReceived.vegetable)
                         Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color:  colorScheme.surface,
-                            border: Border.all(
-                              color:  colorScheme.primary,
-                              width: 3.0,
-                            ),
+                            border: Border.all(color: colorScheme.primary, width: 3.0),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
@@ -170,15 +175,12 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                           height: 50,
                           child: Icon(Icons.restaurant),
                         ),
-                      if (plantRecieved.edible)
+                      if (plantReceived.edible)
                         Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: colorScheme.surface,
-                            border: Border.all(
-                              color: colorScheme.primary,
-                              width: 3.0,
-                            ),
+                            border: Border.all(color: colorScheme.primary, width: 3.0),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
@@ -204,10 +206,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.transparent, width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -216,7 +215,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                             ),
                             TableCell(
                               verticalAlignment: TableCellVerticalAlignment.top,
-                              child: Text(plantRecieved.familyCommonName, style: TextStyle(fontSize: 20)),
+                              child: Text(plantReceived.familyCommonName, style: TextStyle(fontSize: 20)),
                             ),
                           ]
                         ),
@@ -227,10 +226,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.transparent, width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -239,7 +235,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                             ),
                             TableCell(
                               verticalAlignment: TableCellVerticalAlignment.top,
-                              child: Text(plantRecieved.slug, style: TextStyle(fontSize: 20)),
+                              child: Text(plantReceived.slug, style: TextStyle(fontSize: 20)),
                             ),
                           ]
                       ),
@@ -251,10 +247,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.transparent, width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -263,7 +256,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                             ),
                             TableCell(
                               verticalAlignment: TableCellVerticalAlignment.top,
-                              child: Text(plantRecieved.genus, style: TextStyle(fontSize: 20)),
+                              child: Text(plantReceived.genus, style: TextStyle(fontSize: 20)),
                             ),
                           ]
                       ),
@@ -275,10 +268,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.transparent, width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -287,7 +277,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                             ),
                             TableCell(
                               verticalAlignment: TableCellVerticalAlignment.top,
-                              child: Text(plantRecieved.scientificName, style: TextStyle(fontSize: 20)),
+                              child: Text(plantReceived.scientificName, style: TextStyle(fontSize: 20)),
                             ),
                           ]
                       ),
@@ -299,10 +289,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 1.5,
-                                  ),
+                                  border: Border.all(color: Colors.transparent, width: 1.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -311,7 +298,7 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
                             ),
                             TableCell(
                               verticalAlignment: TableCellVerticalAlignment.top,
-                              child: Text(plantRecieved.observations, style: TextStyle(fontSize: 20)),
+                              child: Text(plantReceived.observations, style: TextStyle(fontSize: 20)),
                             ),
                           ]
                       ),
@@ -321,26 +308,5 @@ class PlantDetailsPageState extends State<PlantDetailsPage> {
               )
           )
       );
-  }
-}
-
-class DataCard extends StatelessWidget {
-  const DataCard({super.key, required this.name, required this.value});
-
-  final String name;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        clipBehavior: Clip.hardEdge,
-        child: Row(
-          children: [
-            Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            Spacer(),
-            Text(value, style: TextStyle(fontSize: 20)),
-          ],
-        )
-    );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../network.dart' show searchPlants;
 import '../objects.dart';
 import 'plantDetailsPage.dart' show PlantDetailsPage;
@@ -17,8 +18,6 @@ class SearchPage extends StatefulWidget {
 
 class SearchPageState extends State<SearchPage> {
   List<Plant> plantList = [];
-  final ScrollController plantScrollController = ScrollController();
-  bool showPageNavigation = false;
 
   Future<void> reloadPlantCards() async {
     final (:plants, :totalPages) = await searchPlants(searchQuery, currentPage);
@@ -35,7 +34,6 @@ class SearchPageState extends State<SearchPage> {
       plantList.clear();
     });
   }
-
 
   void scrollToTop(BuildContext context) {
     final controller = PrimaryScrollController.of(context);
@@ -54,14 +52,6 @@ class SearchPageState extends State<SearchPage> {
             children: [
               Padding(padding: const EdgeInsets.all(16),
                   child: SearchTextField(onSubmitted: reloadPlantCards, onClear: clearPlantCards)),
-              if (plantList.isEmpty)
-                Column(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height / 4),
-                    Icon(Icons.search, size: MediaQuery.of(context).size.width / 3),
-                    Text("Search your favorite Plants", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  ],
-                ),
               if (plantList.isNotEmpty)
                 Row(
                   children: [
@@ -141,10 +131,10 @@ class PlantCard extends StatelessWidget {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height / 10,
                 width: MediaQuery.of(context).size.width / 3,
-                child: Image.network(
-                  plant.previewImage,
+                child: CachedNetworkImage(
+                  imageUrl: plant.previewImage,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
+                  errorWidget: (context, url, error) {
                     return Center(child: Icon(Icons.broken_image, size: 64));
                   },
                 ),

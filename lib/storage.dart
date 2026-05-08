@@ -66,21 +66,16 @@ class SavedPlantsListNotifier with ChangeNotifier {
     }
     savedPlants = list;
     notifyListeners();
-    print(list);
-    print(plantId);
   }
 
   Future<void> removePlant(String plantId) async {
     final storage = await SharedPreferences.getInstance();
     final list = storage.getStringList('savedPlants') ?? [];
-    print(plantId);
-    print(list);
 
     list.remove(plantId);
     await storage.setStringList('savedPlants', list);
     savedPlants = list;
     notifyListeners();
-    print(list);
   }
 
   Future<void> loadPlants() async {

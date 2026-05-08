@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pflanzenbox/storage.dart';
+import 'storage.dart';
 import 'pages/settingsPage.dart';
 import 'pages/savedPlantsPage.dart';
 import 'pages/searchPage.dart';
@@ -34,11 +34,11 @@ void main() async {
   await plantNotifier.loadPlants();
   await themeNotifier.loadMode();
   await loadApiKey();
-  runApp(const pflanzenboxApp());
+  runApp(const PflanzenboxApp());
 }
 
-class pflanzenboxApp extends StatelessWidget {
-  const pflanzenboxApp({super.key});
+class PflanzenboxApp extends StatelessWidget {
+  const PflanzenboxApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,19 +49,19 @@ class pflanzenboxApp extends StatelessWidget {
                 theme: AppTheme.light(),
                 darkTheme: AppTheme.dark(),
                 themeMode: themeNotifier.mode,
-                home: navigationBar());
+                home: PflanzenboxAppState());
           });
   }
 }
 
-class navigationBar extends StatefulWidget {
-  const navigationBar({super.key});
+class PflanzenboxAppState extends StatefulWidget {
+  const PflanzenboxAppState({super.key});
 
   @override
-  State<navigationBar> createState() => NavigationBarState();
+  State<PflanzenboxAppState> createState() => NavigationBarState();
 }
 
-class NavigationBarState extends State<navigationBar> {
+class NavigationBarState extends State<PflanzenboxAppState> {
   int currentPageIndex = 0;
 
   final List<Widget> pagesList = const [
@@ -72,7 +72,6 @@ class NavigationBarState extends State<navigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
     return Scaffold(
         body: IndexedStack(
           index: currentPageIndex,

@@ -8,7 +8,7 @@ I made this litte App for University ([DHGE](https://www.dhge.de/))
 
 * 🛠️ [Flutter](https://flutter.dev/)
 * 🪻 [Trefle API Key](https://trefle.io/)
-* 📡 http Package (Add to Project with `dart pub add http shared_preferences`)
+* 📡 http Package (Add to Project with `dart pub add http shared_preferences cached_network_image flutter_launcher_icons`)
 * Run `flutter pub get`
 
 # Storyboard 🧩
@@ -23,6 +23,7 @@ kanban
         task3[Ergebnisse mit Bild, Pflanzenname, Pflanzenfamilie **1**]
         task4[Ergebnisse klickbar in Detailansicht **2**]
         task5[Suche Filtern]
+        task6[Favoriten schon in der Suche sehen]
     columnDetails[Details anzeigen]
         task1[Pflanzenfamilie **2**]
         task2[Ort mit kleiner Minimap?]
