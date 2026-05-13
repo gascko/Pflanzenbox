@@ -4,8 +4,10 @@ import 'pages/settingsPage.dart';
 import 'pages/savedPlantsPage.dart';
 import 'pages/searchPage.dart';
 import 'variables.dart';
+import 'package:flutter/services.dart';
 
 class AppTheme {
+  /// Definition of primary color (Ascend colors will get auto generated)
   static const Color seed = Color(0xFF1B9721);
 
   static ThemeData light() {
@@ -42,6 +44,10 @@ class PflanzenboxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return AnimatedBuilder(
           animation: themeNotifier,
           builder: (context, _) {

@@ -40,7 +40,13 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
                           future: searchPlant(values[i]),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return Card(child: CircularProgressIndicator());
+                              return
+                                Card(
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(child: CircularProgressIndicator()),
+                                  ),
+                                );
                             }
                             return Card(
                                 clipBehavior: Clip.hardEdge,
@@ -77,7 +83,7 @@ class SavedPlantsPageState extends State<SavedPlantsPage> {
                                                         SizedBox(height: 10),
                                                         Row(
                                                             children: [
-                                                              Text(snapshot.data!.familyCommonName),
+                                                              Flexible(child: Text(snapshot.data!.familyCommonName)),
                                                               SizedBox(width: 10),
                                                             ]
                                                         )

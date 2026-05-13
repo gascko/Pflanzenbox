@@ -9,10 +9,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Settings", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
-        body:
-        Padding(padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView(
               children: [
                 Text("Erscheinungsbild", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 const Center(child: ModeRadioSwitch()),

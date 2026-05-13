@@ -4,6 +4,13 @@ import 'package:http/http.dart' as http;
 import 'objects.dart';
 import 'storage.dart' show loadApiKey;
 
+/// Searches for Plants base on [String searchTerm]
+///
+/// Note that returned Plants are not completely filled (just preview data)
+///
+/// Returns last Page [int totalPages]
+///
+/// Returns Plant List [List<Plant> plants]
 Future<({List<Plant> plants, int totalPages})> searchPlants(String searchTerm, int page) async {
   String apiKey = await loadApiKey();
   List<Plant> plantList = [];
@@ -38,6 +45,11 @@ Future<({List<Plant> plants, int totalPages})> searchPlants(String searchTerm, i
   }
 }
 
+/// Searches for a Plant based on [String plantId]
+///
+/// Returned Plant is completely filled
+///
+/// Returns [Plant]
 Future<Plant> searchPlant(String plantId) async {
   String apiKey = await loadApiKey();
   final response = await http.get(

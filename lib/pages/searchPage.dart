@@ -48,60 +48,75 @@ class SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Search", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25))),
-        body: Column(
-            children: [
-              Padding(padding: const EdgeInsets.all(16),
-                  child: SearchTextField(onSubmitted: reloadPlantCards, onClear: clearPlantCards)),
-              if (plantList.isNotEmpty)
-                Row(
-                  children: [
-                    if (currentPage > 1)
-                      Expanded(
-                          child: ElevatedButton(onPressed: () {
-                            currentPage = 1;
-                            reloadPlantCards();
-                          },
-                              child: const Icon(Icons.keyboard_double_arrow_left))
-                      ),
-                    if (currentPage > 1)
-                      Expanded(
-                          child: ElevatedButton(onPressed: () {
-                            currentPage -= 1;
-                            reloadPlantCards();
-                          },
-                              child: const Icon(Icons.keyboard_arrow_left))
-                      ),
-                    if (currentPage < maxPages)
-                      Expanded(
-                          child: ElevatedButton(
+        body: Padding(
+            padding: const EdgeInsets.all(16),
+            child:
+            CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SearchTextField(
+                    onSubmitted: reloadPlantCards,
+                    onClear: clearPlantCards,
+                  ),
+                ),
+
+                if (plantList.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Row(
+                      children: [
+                        if (currentPage > 1)
+                          Expanded(
+                            child: ElevatedButton(
                               onPressed: () {
-                                  currentPage += 1;
-                                  reloadPlantCards();
+                                currentPage = 1;
+                                reloadPlantCards();
                               },
-                              child: const Icon(Icons.keyboard_arrow_right))
-                      ),
-                    if (currentPage < maxPages)
-                      Expanded(
-                          child: ElevatedButton(
+                              child: const Icon(Icons.keyboard_double_arrow_left),
+                            ),
+                          ),
+                        if (currentPage > 1)
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                currentPage -= 1;
+                                reloadPlantCards();
+                              },
+                              child: const Icon(Icons.keyboard_arrow_left),
+                            ),
+                          ),
+                        if (currentPage < maxPages)
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                currentPage += 1;
+                                reloadPlantCards();
+                              },
+                              child: const Icon(Icons.keyboard_arrow_right),
+                            ),
+                          ),
+                        if (currentPage < maxPages)
+                          Expanded(
+                            child: ElevatedButton(
                               onPressed: () {
                                 currentPage = maxPages;
                                 reloadPlantCards();
                               },
-                              child: const Icon(Icons.keyboard_double_arrow_right))
-                      )
-                  ],
+                              child: const Icon(Icons.keyboard_double_arrow_right),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                        (context, index) => PlantCard(plant: plantList[index]),
+                    childCount: plantList.length,
+                  ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    primary: true,
-                      itemCount: plantList.length,
-                      itemBuilder: (context, index) {
-                        return PlantCard(plant: plantList[index]);
-                      }
-                    )
-                )
-            ]
-        )
+              ],
+            ),
+        ),
     );
   }
 }
