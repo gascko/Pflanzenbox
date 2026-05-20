@@ -15,7 +15,7 @@ width: 300px;
 th:nth-child(4) {
 width: 300px;
 }
-</STYLE>
+</style>
 
 |Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
 |--|--|--|--|
