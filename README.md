@@ -1,15 +1,32 @@
-# Pflanzenbox (eng. Plant Box) 🪴
+# Pflanzenbox 🪴
 
-Pflanzenbox is a Mobile Frontend for the [Trefle API](https://trefle.io/) 🌻
+Pflanzenbox ist ein mobile Frontend für die [Trefle API](https://trefle.io/) 🌻
 
-I made this litte App for University ([DHGE](https://www.dhge.de/))
+<style>
+th:nth-child(1) {
+width: 300px;
+}
+th:nth-child(2) {
+width: 300px;
+}
+th:nth-child(3) {
+width: 300px;
+}
+th:nth-child(4) {
+width: 300px;
+}
+</STYLE>
 
-# Requirements
+|Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
+|--|--|--|--|
+|<img src="./Screenshots/Details_Light_Mode_Cover.png"/>|<img src="./Screenshots/Saved_Light_Mode.png"/>|<img src="./Screenshots/Search_Light_Mode.png"/>|<img src="./Screenshots/Settings_Light_Mode.png"/>|
+
+# Anforderungen
 
 * 🛠️ [Flutter](https://flutter.dev/)
 * 🪻 [Trefle API Key](https://trefle.io/)
-* 📡 http Package (Add to Project with `dart pub add http shared_preferences cached_network_image flutter_launcher_icons`)
-* Run `flutter pub get`
+* 📡 http Package (zu Projekt hinzufügen mit `dart pub add http shared_preferences cached_network_image flutter_launcher_icons`)
+* App starten mit `flutter pub get`
 
 # Storyboard 🧩
 
@@ -48,11 +65,24 @@ kanban
     columnTeilen[Pflanze Teilen]
         task1[Pflanzen Infos als PDF oder Bild teilen?]
 ```
+# Screenshots 📱
+
+## Light Mode 🌞
+
+|Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
+|--|--|--|--|
+|<img src="./Screenshots/Details_Light_Mode.png"/>|<img src="./Screenshots/Saved_Light_Mode.png"/>|<img src="./Screenshots/Search_Light_Mode.png"/>|<img src="./Screenshots/Settings_Light_Mode.png"/>|
+
+## Dark Mode 🌚
+
+|Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
+|--|--|--|--|
+|<img src="./Screenshots/Details_Dark_Mode.png"/>|<img src="./Screenshots/Saved_Dark_Mode.png"/>|<img src="./Screenshots/Search_Dark_Mode.png"/>|<img src="./Screenshots/Settings_Dark_Mode.png"/>|
 
 # Mockup 🖼️
 
 Mockup erstellt mit [Microsoft Copilot](https://copilot.cloud.microsoft/)
 
-<img src="./Mockup/Mockup_Plant_Page.png" width="300"/>
-<img src="./Mockup/Mockup_Favorites.png" width="300"/>
-<img src="./Mockup/Mockup_Settings.png" width="300"/>
+|Detailansicht|Gespeicherte Pflanzen|Einstellungen|
+|--|--|--|
+|<img src="./Mockup/Mockup_Plant_Page.png"/>|<img src="./Mockup/Mockup_Favorites.png"/>|<img src="./Mockup/Mockup_Settings.png"/>|
