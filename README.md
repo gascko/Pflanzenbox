@@ -2,21 +2,6 @@
 
 Pflanzenbox ist ein mobile Frontend für die [Trefle API](https://trefle.io/) 🌻
 
-<style>
-th:nth-child(1) {
-width: 300px;
-}
-th:nth-child(2) {
-width: 300px;
-}
-th:nth-child(3) {
-width: 300px;
-}
-th:nth-child(4) {
-width: 300px;
-}
-</style>
-
 |Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
 |--|--|--|--|
 |<img src="./Screenshots/Details_Light_Mode_Cover.png"/>|<img src="./Screenshots/Saved_Light_Mode.png"/>|<img src="./Screenshots/Search_Light_Mode.png"/>|<img src="./Screenshots/Settings_Light_Mode.png"/>|
