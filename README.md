@@ -10,8 +10,7 @@ Pflanzenbox ist ein mobiles Frontend für die [Trefle API](https://trefle.io/) �
 
 * 🛠️ [Flutter](https://flutter.dev/)
 * 🪻 [Trefle API Key](https://trefle.io/)
-* 📡 http Package (zu Projekt hinzufügen mit `dart pub add http shared_preferences cached_network_image flutter_launcher_icons`)
-* App starten mit `flutter pub get`
+* 📡 `dart pub add http shared_preferences cached_network_image flutter_launcher_icons`
 
 # Storyboard 🧩
 
