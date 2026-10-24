@@ -1,6 +1,6 @@
 # Pflanzenbox 🪴
 
-Pflanzenbox ist ein mobile Frontend für die [Trefle API](https://trefle.io/) 🌻
+Pflanzenbox ist ein mobiles Frontend für die [Trefle API](https://trefle.io/) 🌻
 
 |Detailansicht|Gespeicherte Pflanzen|Pflanzen Suche|Einstellungen|
 |--|--|--|--|
